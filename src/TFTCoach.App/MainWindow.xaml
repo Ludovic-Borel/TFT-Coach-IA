@@ -19,6 +19,21 @@
             VerticalAlignment="Center"
             Spacing="12">
 
+            <ComboBox
+                x:Name="ZoneTypeComboBox"
+                Width="220"
+                 SelectedIndex="0">
+
+                <ComboBoxItem Content="Board"/>
+                <ComboBoxItem Content="Banc"/>
+                <ComboBoxItem Content="Boutique"/>
+                <ComboBoxItem Content="Gold"/>
+                <ComboBoxItem Content="Stage"/>
+                <ComboBoxItem Content="Traits"/>
+                <ComboBoxItem Content="Augmentations"/>
+                <ComboBoxItem Content="Carousel"/>
+
+            </ComboBox>
             <Button
                 x:Name="BtnTest"
                 Width="220"
@@ -33,14 +48,25 @@
             <TextBlock
                 x:Name="TxtRect"
                 Text=""
-                HorizontalAlignment="Center"/>            
-            
-            <Image
-                x:Name="ImgCapture"
-                  Width="640"
-                 Height="360"
-                Stretch="Uniform"/>
-            
-            </StackPanel>
+                HorizontalAlignment="Center"/>
+
+            <Grid
+                 Width="640"
+                 Height="360">
+
+                <Image
+                   x:Name="ImgCapture"
+                   Stretch="Fill"/>
+
+                <Canvas
+                      x:Name="OverlayCanvas"
+                      Background="Transparent"
+                      PointerPressed="OverlayCanvas_PointerPressed"
+                     PointerMoved="OverlayCanvas_PointerMoved"
+                     PointerReleased="OverlayCanvas_PointerReleased"/>
+
+            </Grid>
+
+        </StackPanel>
     </Grid>
 </Window>
