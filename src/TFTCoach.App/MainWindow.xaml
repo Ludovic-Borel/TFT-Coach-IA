@@ -33,8 +33,14 @@
             <TextBlock
                 x:Name="TxtRect"
                 Text=""
-                HorizontalAlignment="Center"/>
-
-        </StackPanel>
+                HorizontalAlignment="Center"/>            
+            
+            <Image
+                x:Name="ImgCapture"
+                  Width="640"
+                 Height="360"
+                Stretch="Uniform"/>
+            
+            </StackPanel>
     </Grid>
 </Window>

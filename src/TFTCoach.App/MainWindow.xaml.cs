@@ -3,6 +3,7 @@ using ScreenCapture.NET;
 using System;
 using System.Linq;
 using TFTCoach.Core.Interfaces;
+using TFTCoach.App.Services;
 
 namespace TFTCoach.App;
 
@@ -30,7 +31,7 @@ public sealed partial class MainWindow : Window
         _captureService = new Capture.Services.CaptureService();
     }
 
-    private void BtnTest_Click(object sender, RoutedEventArgs e)
+    private async void BtnTest_Click(object sender, RoutedEventArgs e)
     {
         if (_processService.IsRunning())
         {
@@ -54,12 +55,14 @@ public sealed partial class MainWindow : Window
 
                     if (initialized)
                     {
-                        var frame = _captureService.CaptureAsync().Result;
+                        var frame = await _captureService.CaptureAsync();
 
                         if (frame != null)
                         {
                             TxtRect.Text =
                                 $"{frame.Width} x {frame.Height} - {frame.Pixels!.Length} octets";
+
+                            ImgCapture.Source = FrameRenderer.CreateBitmap(frame);
                         }
                     }
 
