@@ -1,0 +1,25 @@
+<Solution>
+  <Configurations>
+    <Platform Name="ARM64" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="../../externals/ScreenCapture.NET.DX11/ScreenCapture.NET.DX11.csproj" />
+  <Project Path="../../externals/ScreenCapture.NET/ScreenCapture.NET.csproj" />
+  <Project Path="../TFTCoach.Capture/TFTCoach.Capture.csproj">
+    <BuildDependency Project="../TFTCoach.Core/TFTCoach.Core.csproj" />
+  </Project>
+  <Project Path="../TFTCoach.Core/TFTCoach.Core.csproj" />
+  <Project Path="../TFTCoach.Infrastructure/TFTCoach.Infrastructure.csproj">
+    <BuildDependency Project="../TFTCoach.Core/TFTCoach.Core.csproj" />
+  </Project>
+  <Project Path="TFTCoach.App.csproj">
+    <BuildDependency Project="../TFTCoach.Capture/TFTCoach.Capture.csproj" />
+    <BuildDependency Project="../TFTCoach.Core/TFTCoach.Core.csproj" />
+    <BuildDependency Project="../TFTCoach.Infrastructure/TFTCoach.Infrastructure.csproj" />
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="*|x64" Project="x64" />
+    <Platform Solution="*|x86" Project="x86" />
+    <Deploy />
+  </Project>
+</Solution>

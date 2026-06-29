@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "TFTCoach.App (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "TFTCoach.App (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
