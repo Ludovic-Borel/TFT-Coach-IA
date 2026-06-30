@@ -28,6 +28,16 @@ public sealed partial class MainWindow : Window
     private TFTCoach.Core.Models.CaptureRectangle? _selectedZone;
     private TFTCoach.Core.Models.CaptureFrame? _currentFrame;
     private readonly List<CaptureZone> _zones = new();
+    private void BtnDeleteZone_Click(object sender, RoutedEventArgs e)
+    {
+        var selectedType = (CaptureZoneType)ZoneTypeComboBox.SelectedIndex;
+
+        _zones.RemoveAll(z => z.Type == selectedType);
+
+        RefreshZonesList();
+
+        TxtStatus.Text = $"Zones enregistrées : {_zones.Count}";
+    }
 
     private void DrawTestRectangle()
     {
@@ -64,9 +74,27 @@ public sealed partial class MainWindow : Window
         _processService = new Infrastructure.Services.TftProcessService();
         _captureService = new Capture.Services.CaptureService();
     }
-
-    private async void BtnTest_Click(object sender, RoutedEventArgs e)
+        private void RefreshZonesList()
     {
+        ZonesListView.Items.Clear();
+
+        foreach (var zone in _zones.OrderBy(z => z.Type))
+        {
+            ZonesListView.Items.Add(
+                $"{zone.Type} ({zone.Rectangle.Width} x {zone.Rectangle.Height})");
+        }
+    }
+
+        private async void BtnTest_Click(object sender, RoutedEventArgs e)
+    {
+        _selectedZone = null;
+        _currentFrame = null;
+        _selectionRectangle = null;
+
+        OverlayCanvas.Children.Clear();
+
+        _zones.Clear();
+        RefreshZonesList();
         if (_processService.IsRunning())
         {
             TxtStatus.Text = "TFT détecté";
@@ -133,6 +161,14 @@ public sealed partial class MainWindow : Window
     }
     private void OverlayCanvas_PointerPressed(object sender, PointerRoutedEventArgs e)
     {
+        if (_currentFrame == null)
+        {
+            TxtStatus.Text = "Clique d'abord sur « Tester TFT »";
+            return;
+        }
+
+        _selectedZone = null;
+
         _isDrawing = true;
 
         _startPoint = e.GetCurrentPoint(OverlayCanvas).Position;
@@ -141,6 +177,8 @@ public sealed partial class MainWindow : Window
 
         _selectionRectangle = new Rectangle
         {
+            Width = 0,
+            Height = 0,
             Stroke = new SolidColorBrush(Microsoft.UI.Colors.Lime),
             StrokeThickness = 2
         };
@@ -173,6 +211,12 @@ public sealed partial class MainWindow : Window
 
     private void OverlayCanvas_PointerReleased(object sender, PointerRoutedEventArgs e)
     {
+        if (_currentFrame == null)
+        {
+            TxtStatus.Text = "Clique d'abord sur « Tester TFT »";
+            return;
+        }
+
         if (!_isDrawing)
             return;
 
@@ -180,6 +224,17 @@ public sealed partial class MainWindow : Window
 
         if (_selectionRectangle == null)
             return;
+        if (double.IsNaN(_selectionRectangle.Width) ||
+    double.IsNaN(_selectionRectangle.Height) ||
+    _selectionRectangle.Width < 5 ||
+    _selectionRectangle.Height < 5)
+        {
+            TxtStatus.Text = $"Rectangle invalide : W={_selectionRectangle.Width} H={_selectionRectangle.Height}";
+
+            OverlayCanvas.Children.Clear();
+            _selectionRectangle = null;
+            return;
+        }
         if (_currentFrame == null)
         {
             TxtStatus.Text = "Clique d'abord sur « Tester TFT » pour capturer une image.";
@@ -192,6 +247,9 @@ public sealed partial class MainWindow : Window
     Width: (int)_selectionRectangle.Width,
     Height: (int)_selectionRectangle.Height);
 
+        TxtStatus.Text =
+     $"Display : {_selectionRectangle.Width} x {_selectionRectangle.Height}";
+
         _selectedZone = CoordinateMapper.ToCaptureRectangle(
             displayRectangle,
             displayWidth: (int)ImgCapture.ActualWidth,
@@ -201,9 +259,22 @@ public sealed partial class MainWindow : Window
 
         var selectedType = (CaptureZoneType)ZoneTypeComboBox.SelectedIndex;
 
-        _zones.Add(new CaptureZone(
-            selectedType,
-            _selectedZone));
+        var existing = _zones.FindIndex(z => z.Type == selectedType);
+
+        if (existing >= 0)
+        {
+            _zones[existing] = new CaptureZone(
+                selectedType,
+                _selectedZone);
+        }
+        else
+        {
+            _zones.Add(new CaptureZone(
+                selectedType,
+                _selectedZone));
+        }
+
+        RefreshZonesList();
 
         TxtRect.Text = "";
 
@@ -224,5 +295,7 @@ public sealed partial class MainWindow : Window
             $"Y={_selectedZone.Y}  " +
             $"W={_selectedZone.Width}  " +
             $"H={_selectedZone.Height}";
+
+        _selectionRectangle = null;
     }
 }

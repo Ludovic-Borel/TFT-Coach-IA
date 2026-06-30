@@ -24,9 +24,12 @@ public sealed class CaptureService : ICaptureService
     int top,
     int width,
     int height)
+
+
     {
         if (windowHandle == IntPtr.Zero)
             return false;
+        
 
         var card = _service.GetGraphicsCards().First();
 
@@ -41,6 +44,8 @@ public sealed class CaptureService : ICaptureService
             top,
             width,
             height);
+
+        
 
         return true;
     }

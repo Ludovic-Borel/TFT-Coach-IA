@@ -14,15 +14,22 @@
     </Window.SystemBackdrop>
 
     <Grid>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Panneau gauche -->
         <StackPanel
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Spacing="12">
+        Grid.Column="0"
+        Margin="20"
+        Spacing="10">
 
             <ComboBox
-                x:Name="ZoneTypeComboBox"
-                Width="220"
-                 SelectedIndex="0">
+            x:Name="ZoneTypeComboBox"
+            SelectedIndex="0">
 
                 <ComboBoxItem Content="Board"/>
                 <ComboBoxItem Content="Banc"/>
@@ -34,39 +41,49 @@
                 <ComboBoxItem Content="Carousel"/>
 
             </ComboBox>
+
             <Button
-                x:Name="BtnTest"
-                Width="220"
-                Content="Tester TFT"
-                Click="BtnTest_Click"/>
+            x:Name="BtnDeleteZone"
+            Content="Supprimer la zone"
+            Click="BtnDeleteZone_Click"/>
+
+            <ListView
+            x:Name="ZonesListView"
+            Height="220"/>
+
+            <Button
+            x:Name="BtnTest"
+            Content="Tester TFT"
+            Click="BtnTest_Click"/>
 
             <TextBlock
-                x:Name="TxtStatus"
-                Text="En attente..."
-                HorizontalAlignment="Center"/>
+            x:Name="TxtStatus"/>
 
             <TextBlock
-                x:Name="TxtRect"
-                Text=""
-                HorizontalAlignment="Center"/>
-
-            <Grid
-                 Width="640"
-                 Height="360">
-
-                <Image
-                   x:Name="ImgCapture"
-                   Stretch="Fill"/>
-
-                <Canvas
-                      x:Name="OverlayCanvas"
-                      Background="Transparent"
-                      PointerPressed="OverlayCanvas_PointerPressed"
-                     PointerMoved="OverlayCanvas_PointerMoved"
-                     PointerReleased="OverlayCanvas_PointerReleased"/>
-
-            </Grid>
+            x:Name="TxtRect"/>
 
         </StackPanel>
+
+        <!-- Capture -->
+        <Grid
+        Grid.Column="2"
+        Width="640"
+        Height="360"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center">
+
+            <Image
+            x:Name="ImgCapture"
+            Stretch="Fill"/>
+
+            <Canvas
+            x:Name="OverlayCanvas"
+            Background="Transparent"
+            PointerPressed="OverlayCanvas_PointerPressed"
+            PointerMoved="OverlayCanvas_PointerMoved"
+            PointerReleased="OverlayCanvas_PointerReleased"/>
+
+        </Grid>
+
     </Grid>
 </Window>
