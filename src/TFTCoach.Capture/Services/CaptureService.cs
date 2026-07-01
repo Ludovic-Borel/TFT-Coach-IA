@@ -12,11 +12,13 @@ public sealed class CaptureService : ICaptureService
 
     private DX11ScreenCapture? _capture;
     private CaptureZone<ColorBGRA>? _zone;
+    private bool _initialized;
 
     public CaptureService()
     {
         _service = new DX11ScreenCaptureService();
     }
+
 
     public bool Initialize(
     IntPtr windowHandle,
@@ -29,7 +31,9 @@ public sealed class CaptureService : ICaptureService
     {
         if (windowHandle == IntPtr.Zero)
             return false;
-        
+        if (_initialized)
+            return true;
+
 
         var card = _service.GetGraphicsCards().First();
 
@@ -45,7 +49,7 @@ public sealed class CaptureService : ICaptureService
             width,
             height);
 
-        
+        _initialized = true;
 
         return true;
     }

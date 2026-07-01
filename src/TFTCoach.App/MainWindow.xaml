@@ -31,14 +31,14 @@
             x:Name="ZoneTypeComboBox"
             SelectedIndex="0">
 
-                <ComboBoxItem Content="Board"/>
+                <ComboBoxItem Content="Plateau"/>
                 <ComboBoxItem Content="Banc"/>
                 <ComboBoxItem Content="Boutique"/>
-                <ComboBoxItem Content="Gold"/>
-                <ComboBoxItem Content="Stage"/>
+                <ComboBoxItem Content="Or"/>
+                <ComboBoxItem Content="Etape"/>
                 <ComboBoxItem Content="Traits"/>
                 <ComboBoxItem Content="Augmentations"/>
-                <ComboBoxItem Content="Carousel"/>
+                <ComboBoxItem Content="Carrousel"/>
 
             </ComboBox>
 
@@ -46,10 +46,16 @@
             x:Name="BtnDeleteZone"
             Content="Supprimer la zone"
             Click="BtnDeleteZone_Click"/>
+            
+            <Button
+            x:Name="BtnSaveZones"
+            Content="Enregistrer les zones"
+            Click="BtnSaveZones_Click"/>
 
             <ListView
-            x:Name="ZonesListView"
-            Height="220"/>
+    x:Name="ZonesListView"
+    Height="220"
+    SelectionChanged="ZonesListView_SelectionChanged"/>
 
             <Button
             x:Name="BtnTest"

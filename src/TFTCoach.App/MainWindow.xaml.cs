@@ -28,6 +28,9 @@ public sealed partial class MainWindow : Window
     private TFTCoach.Core.Models.CaptureRectangle? _selectedZone;
     private TFTCoach.Core.Models.CaptureFrame? _currentFrame;
     private readonly List<CaptureZone> _zones = new();
+
+    private readonly Infrastructure.Services.ZoneConfigurationService _zoneConfigurationService;
+
     private void BtnDeleteZone_Click(object sender, RoutedEventArgs e)
     {
         var selectedType = (CaptureZoneType)ZoneTypeComboBox.SelectedIndex;
@@ -37,6 +40,40 @@ public sealed partial class MainWindow : Window
         RefreshZonesList();
 
         TxtStatus.Text = $"Zones enregistrées : {_zones.Count}";
+
+        if (_currentFrame != null)
+        {
+            var cropped = TFTCoach.Capture.Processing.FrameCropper.Crop(
+                _currentFrame,
+                _selectedZone);
+
+            ImgCapture.Source = FrameRenderer.CreateBitmap(cropped);
+        }
+    }
+
+    private void ZonesListView_SelectionChanged(
+    object sender,
+    SelectionChangedEventArgs e)
+    {
+        if (ZonesListView.SelectedIndex < 0)
+            return;
+
+        var zone = _zones
+            .OrderBy(z => z.Type)
+            .ElementAt(ZonesListView.SelectedIndex);
+
+        _selectedZone = zone.Rectangle;
+
+        if (_currentFrame != null)
+        {
+            var cropped = TFTCoach.Capture.Processing.FrameCropper.Crop(
+                _currentFrame,
+                _selectedZone);
+
+            ImgCapture.Source = FrameRenderer.CreateBitmap(cropped);
+        }
+
+        TxtStatus.Text = $"Zone sélectionnée : {zone.Type}";
     }
 
     private void DrawTestRectangle()
@@ -73,6 +110,10 @@ public sealed partial class MainWindow : Window
 
         _processService = new Infrastructure.Services.TftProcessService();
         _captureService = new Capture.Services.CaptureService();
+        _zoneConfigurationService = new Infrastructure.Services.ZoneConfigurationService();
+        _zones.AddRange(_zoneConfigurationService.Load());
+
+        RefreshZonesList();
     }
         private void RefreshZonesList()
     {
@@ -93,8 +134,6 @@ public sealed partial class MainWindow : Window
 
         OverlayCanvas.Children.Clear();
 
-        _zones.Clear();
-        RefreshZonesList();
         if (_processService.IsRunning())
         {
             TxtStatus.Text = "TFT détecté";
@@ -297,5 +336,12 @@ public sealed partial class MainWindow : Window
             $"H={_selectedZone.Height}";
 
         _selectionRectangle = null;
+    }
+
+        private void BtnSaveZones_Click(object sender, RoutedEventArgs e)
+    {
+        _zoneConfigurationService.Save(_zones);
+
+        TxtStatus.Text = "Zones sauvegardées.";
     }
 }
